@@ -1,0 +1,3 @@
+"""
+Renders the pixel map
+"""
