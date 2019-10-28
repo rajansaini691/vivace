@@ -13,14 +13,10 @@ Starts a jack client
     - Compute time needs to be measured
 """
 
-import sys
-import signal
-import os
 import jack
-import threading
-import numpy as np
-from scipy import signal
-import matplotlib.pyplot as plt
+from numpy.fft import fft
+from numpy import absolute
+import time
 
 """
 Configuration
@@ -39,7 +35,6 @@ buffer_size = None          # Size of audio buffer
 Set up Jack client
 """
 client = jack.Client(JACK_NAME)
-
 @client.set_blocksize_callback
 def blocksize(blocksize):
     global buffer_size
@@ -74,34 +69,33 @@ with client:
         client.connect(src, dest)
 
     """
-    Fourier stuff
+    Fourier stuff - For preliminary performance testing
     """
     try:
-        # Number of points being graphed (half are redundant)
-        n = int(buffer_size / 2)
-
-        # Initialize plotting library
-        plt.ion()   # Allow live updating
-        fig = plt.figure()
-        ax = fig.add_subplot(111)     
-
-        # Initialize input bounds, frequency curve
-        t = np.linspace(0, fs/2., n)
-        y = np.array(audio_buffer[0:n])
-        fft_line, = ax.plot(t, y)
+        # Initialize fourier buffer
+        fourier_buffer = None
 
         while True:
-            if len(audio_buffer) > 0:
-                # In case an interrupt changes the buffer size
-                n = int(buffer_size / 2)
+            # Ensure that data is being written before doing calculations
+            if len(audio_buffer) <= 0:
+                continue
 
-                # Calculate the fourier transform and throw out half
-                yf = np.abs(np.fft.fft(audio_buffer) / 1000)
-                yf = yf[0:n]
+            # Time at beginning of grand loop
+            start = time.time() * 1000
 
-                # Draw the new FFT curve
-                fft_line.set_ydata(yf)
-                fig.canvas.draw()
-                fig.canvas.flush_events()
+            # In case an interrupt changes the buffer size
+            n = int(buffer_size / 2)
+
+            # Calculate the fourier transform and throw out redundant half
+            fourier_buffer = absolute(fft(audio_buffer) / 1000)
+            fourier_buffer = fourier_buffer[0:n]
+
+            # Time after calculations
+            end = time.time() * 1000
+
+            # Make sure calculations are completed fast enough
+            if(1.0 / (end - start) > fs):
+                print("Failed deadline")
+
     except KeyboardInterrupt:
         print("Closing Jack!")
