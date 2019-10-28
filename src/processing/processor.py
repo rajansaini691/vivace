@@ -47,6 +47,7 @@ Components:
      - Kick hit (possibly using transient detection)
      - Transients (using a transient detection algorithm)
      - General mid-range volume
+     - Differences between left and right channels
 
  3) Write to pixel map
    - A lot of the modulating things above may do the writing already, and their
