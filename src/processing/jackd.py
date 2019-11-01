@@ -14,14 +14,14 @@ Starts a jack client
 """
 
 import jack
-from numpy.fft import fft
-from numpy import absolute
-import time
+from enum import Enum
+from threading import Lock
 
 """
-Configuration
+Configuration - TODO Put in global configuration file
 """
 JACK_NAME = "vivace"
+AUDIO_BUFFER_SIZE = 4096
 
 """
 Exposed data
@@ -32,70 +32,71 @@ fs = None                   # Global samplerate for data coming in
 buffer_size = None          # Size of audio buffer
 
 """
-Set up Jack client
+State management
+    ERR - Jack client is currently in an error state
+    UNINIT - Client has not yet been initialized
+    READY - Client can be read from
 """
-client = jack.Client(JACK_NAME)
-@client.set_blocksize_callback
-def blocksize(blocksize):
-    global buffer_size
-    buffer_size = blocksize
-    
-@client.set_samplerate_callback
-def samplerate(samplerate):
-    global fs
-    fs = samplerate
+JACK_STATES = Enum('JACK_STATES', 'ERR UNINIT READY')
+jack_state = JACK_STATES.UNINIT
+buffer_lock = Lock()
 
-@client.set_process_callback
-def process(frames):
-    for i in client.inports:
-        global audio_buffer
-        audio_buffer = i.get_array()
+def init_jack():
+    """
+    Starts a jack client that grabs live data from PulseAudio
+    """
+    # Ensure only one jack client gets created
+    if(jack_state != JACK_STATES.UNINIT): 
+        raise RuntimeError("Only one jack client should be made")
 
-# Accept input from a single audio source
-client.inports.register("input_1")
+    """
+    Set up Jack client
+    """
+    client = jack.Client(JACK_NAME)
 
-# TODO Put in a global configuration file
-client.blocksize = 4096
+    # Accept input from a single audio source
+    client.inports.register("input_1")
 
-# Enable client
-with client:
+    @client.set_blocksize_callback
+    def blocksize(blocksize):
+        global buffer_size
+        buffer_size = blocksize
+        
+    @client.set_samplerate_callback
+    def samplerate(samplerate):
+        global fs
+        fs = samplerate
+
+    @client.set_process_callback
+    def process(frames):
+        buffer_lock.acquire() 
+        for i in client.inports:
+            global audio_buffer
+            audio_buffer = i.get_array()
+        buffer_lock.release()
+
+    client.blocksize = self.AUDIO_BUFFER_SIZE
+
+    # Starts jack client
+    client.activate()
+
     # Connect our client to pulseaudio
     pulse = client.get_ports(name_pattern = "Pulse", is_output=True)
 
     if not pulse:
-        raise RuntimeError("No physical capture ports")
+        jack_state = JACK_STATES.ERR
+        raise RuntimeError("PulseAudio not running")
 
     for src, dest in zip(pulse, client.inports):
         client.connect(src, dest)
 
-    """
-    Fourier stuff - For preliminary performance testing
-    """
-    try:
-        # Initialize fourier buffer
-        fourier_buffer = None
+    jack_state = JACK_STATES.READY
 
-        while True:
-            # Ensure that data is being written before doing calculations
-            if len(audio_buffer) <= 0:
-                continue
+def get_audio_buffer():
+    buffer_lock.acquire()
+    
+    # Copy audio buffer to new buffer safely
+    cur_buf = audio_buffer
 
-            # Time at beginning of grand loop
-            start = time.time() * 1000
-
-            # In case an interrupt changes the buffer size
-            n = int(buffer_size / 2)
-
-            # Calculate the fourier transform and throw out redundant half
-            fourier_buffer = absolute(fft(audio_buffer) / 1000)
-            fourier_buffer = fourier_buffer[0:n]
-
-            # Time after calculations
-            end = time.time() * 1000
-
-            # Make sure calculations are completed fast enough
-            if(1.0 / (end - start) > fs):
-                print("Failed deadline")
-
-    except KeyboardInterrupt:
-        print("Closing Jack!")
+    buffer_lock.release()
+    return cur_buf
