@@ -1,3 +1,5 @@
+from jackd import *
+
 """
 Processes an audio file and writes to the pixel map for the given tick
 
@@ -10,6 +12,7 @@ Components:
    - From an audio file (real-time and preprocessing)
      - We need a directory of audio files, and the path should go into the
        configuration
+   - From a browser (in which case rendering will also be done on a browser)
  2) Perform computations shared by all renderers
    - Compute FFT 
    - Determine quality of current tick (Is a kick happening? Did a chord
@@ -55,3 +58,4 @@ Components:
    - Note: Nothing should persist from the last frame, so either the entire background
      needs to be modulated or we start each frame with a blank slate
 """
+
