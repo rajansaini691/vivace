@@ -1,4 +1,6 @@
 import numpy as np
+from processing.vjack import *
+from processing.shared_computations import *
 
 # TODO Move to own configuration file
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -13,6 +15,15 @@ NUM_PIXELS = 1000
 # The RGB pixel map getting rendered. 
 # Ex: [(0x00, 0x00, 0x00), (0xFF, 0xFF, 0xFF)] is rendered as black, white
 pixel_map = [(0x00, 0x00, 0x00)] * NUM_PIXELS
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Initializations
+
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+# Create jack client to get live audio data
+init_jack()
 
 """""""""""""""""""""""""""""""""""""""""""""""
 
