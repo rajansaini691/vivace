@@ -2,7 +2,6 @@
 Starts a jack client
 
  - Passes audio playing from system programs to the main audio processor
- - We'll test this by rendering a simple FFT in-house
  - Updates a sample array every audio frame
    - Keeps the audio reads independent from the time to process the data and
      write to the pixel map
@@ -17,86 +16,83 @@ import jack
 from enum import Enum
 from threading import Lock
 
-"""
-Configuration - TODO Put in global configuration file
-"""
-JACK_NAME = "vivace"
-AUDIO_BUFFER_SIZE = 4096
 
-"""
-Exposed data
-"""
-audio_buffer = []           # Raw audio buffer coming from Jack
-audio_spectrograph = []     # Array of data points storing FFT
-fs = None                   # Global samplerate for data coming in
-buffer_size = None          # Size of audio buffer
-
-"""
-State management
-    ERR - Jack client is currently in an error state
-    UNINIT - Client has not yet been initialized
-    READY - Client can be read from
-"""
-JACK_STATES = Enum('JACK_STATES', 'ERR UNINIT READY')
-jack_state = JACK_STATES.UNINIT
-buffer_lock = Lock()
-
-def init_jack():
+class VJack:
     """
-    Starts a jack client that grabs live data from PulseAudio
+    Configuration - TODO Put in global configuration file
     """
-    # Ensure only one jack client gets created
-    if(jack_state != JACK_STATES.UNINIT): 
-        raise RuntimeError("Only one jack client should be made")
+    AUDIO_BUFFER_SIZE = 4096
 
     """
-    Set up Jack client
+    Exposed data
     """
-    client = jack.Client(JACK_NAME)
+    audio_buffer = []           # Raw audio buffer coming from Jack
+    buffer_size = None          # Size of audio buffer
 
-    # Accept input from a single audio source
-    client.inports.register("input_1")
+    """
+    State management
+        ERR - Jack client is currently in an error state
+        UNINIT - Client has not yet been initialized
+        READY - Client can be read from
+    """
+    JACK_STATES = Enum('JACK_STATES', 'ERR UNINIT READY')
+    jack_state = JACK_STATES.UNINIT
+    buffer_lock = Lock()
 
-    @client.set_blocksize_callback
-    def blocksize(blocksize):
-        global buffer_size
-        buffer_size = blocksize
-        
-    @client.set_samplerate_callback
-    def samplerate(samplerate):
-        global fs
-        fs = samplerate
+    def __init__(self, audio_conf):
+        """
+        Starts a jack client that grabs live data from PulseAudio
+        """
+        # Ensure only one jack client gets created
+        if(self.jack_state != self.JACK_STATES.UNINIT):
+            raise RuntimeError("Only one jack client should be made")
 
-    @client.set_process_callback
-    def process(frames):
-        buffer_lock.acquire() 
-        for i in client.inports:
-            global audio_buffer
-            audio_buffer = i.get_array()
-        buffer_lock.release()
+        """
+        Set up Jack client
+        """
+        client = jack.Client(audio_conf.NAME)
 
-    client.blocksize = self.AUDIO_BUFFER_SIZE
+        # Accept input from a single audio source
+        client.inports.register("input_1")
 
-    # Starts jack client
-    client.activate()
+        @client.set_blocksize_callback
+        def blocksize(blocksize):
+            audio_conf.buffer_size = blocksize
 
-    # Connect our client to pulseaudio
-    pulse = client.get_ports(name_pattern = "Pulse", is_output=True)
+        @client.set_samplerate_callback
+        def samplerate(samplerate):
+            audio_conf.SAMPLERATE = samplerate
 
-    if not pulse:
-        jack_state = JACK_STATES.ERR
-        raise RuntimeError("PulseAudio not running")
+        @client.set_process_callback
+        def process(frames):
+            self.buffer_lock.acquire()
+            for i in client.inports:
+                self.audio_buffer
+                self.audio_buffer = i.get_array()
+            self.buffer_lock.release()
 
-    for src, dest in zip(pulse, client.inports):
-        client.connect(src, dest)
+        client.blocksize = audio_conf.BUFFER_SIZE
 
-    jack_state = JACK_STATES.READY
+        # Starts jack client
+        client.activate()
 
-def get_audio_buffer():
-    buffer_lock.acquire()
-    
-    # Copy audio buffer to new buffer safely
-    cur_buf = audio_buffer
+        # Connect our client to pulseaudio
+        pulse = client.get_ports(name_pattern="Pulse", is_output=True)
 
-    buffer_lock.release()
-    return cur_buf
+        if not pulse:
+            self.jack_state = self.JACK_STATES.ERR
+            raise RuntimeError("PulseAudio not running")
+
+        for src, dest in zip(pulse, client.inports):
+            client.connect(src, dest)
+
+        self.jack_state = self.JACK_STATES.READY
+
+    def get_audio_buffer(self):
+        self.buffer_lock.acquire()
+
+        # Copy audio buffer to new buffer safely
+        cur_buf = self.audio_buffer
+
+        self.buffer_lock.release()
+        return cur_buf
