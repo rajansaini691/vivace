@@ -7,7 +7,7 @@ class VRenderer:
 
     # TODO Store individual rendering objects
 
-    def update_pixel_map(self, event_list, light_conf, pixel_map):
+    def update_pixel_map(self, event_list, pixel_conf, pixel_map):
         """
         Parameters:
             event_list      The list of audio events that occurred during the
@@ -21,3 +21,7 @@ class VRenderer:
         """
         if event_list.ON:
             print("ON")
+
+        # TODO Delete when rendering is started
+        for i in range(len(pixel_map)):
+            pixel_map[i] = (0xFF, 0xFF, 0xFF)

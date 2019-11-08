@@ -3,6 +3,7 @@ from processing.processor import VProcessor
 from processing.audio_conf import AudioConf
 from rendering.renderer import VRenderer
 from rendering.rendering_conf import RenderingConf
+from rendering.light_simulator import VSimulator
 from events import VEvents
 from time import process_time, sleep
 
@@ -23,11 +24,17 @@ Initializations
 # Wrapper for jack client to get live audio data
 jack = VJack(audio_conf)
 
+# Stores the events
 event_list = VEvents()
 
+# Updates the event list
 processor = VProcessor()
 
+# Updates the pixel map
 renderer = VRenderer()
+
+# Draws the pixel map
+simulator = VSimulator(rendering_conf)
 
 # The RGB pixel map getting rendered.
 # Ex: [(0x00, 0x00, 0x00), (0xFF, 0xFF, 0xFF)] is rendered as black, white
@@ -57,6 +64,7 @@ while True:
     renderer.update_pixel_map(event_list, rendering_conf, pixel_map)
 
     # Writes (Test output to LEDs)
+    simulator.write(pixel_map)
 
     # Sleep for remainder of loop time
     delta_t = process_time() - curr_time
