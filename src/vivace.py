@@ -20,7 +20,7 @@ Initializations
 
 """""""""""""""""""""""""""""""""""""""""""""""
 
-# Create jack client to get live audio data
+# Wrapper for jack client to get live audio data
 jack = VJack(audio_conf)
 
 event_list = VEvents()

@@ -27,7 +27,5 @@ def get_fourier(audio_buffer, audio_conf):
     y = y[0:n]
     t = np.linspace(0, audio_conf.SAMPLERATE / 2, n)
 
-    print(y)
-
     fourier = column_stack((t, y))
     return fourier
