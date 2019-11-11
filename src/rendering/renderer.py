@@ -1,13 +1,17 @@
 """
 Renders the pixel map
 """
+from rendering.background import draw_background
+from events import VEvents
 
 
 class VRenderer:
 
-    # TODO Store individual rendering objects
+    # TODO Store individual rendering objects here
 
-    def update_pixel_map(self, event_list, pixel_conf, pixel_map):
+    BACKGROUND_COLOR = (0, 255, 255)  # Cyan
+
+    def update_pixel_map(self, event_list: VEvents, pixel_conf, pixel_map):
         """
         Parameters:
             event_list      The list of audio events that occurred during the
@@ -25,3 +29,6 @@ class VRenderer:
         # TODO Delete when rendering is started
         for i in range(len(pixel_map)):
             pixel_map[i] = (0xFF, 0xFF, 0xFF)
+
+        # Draw background modulated by amount of bass
+        draw_background(pixel_map, self.BACKGROUND_COLOR, event_list.BASS)
