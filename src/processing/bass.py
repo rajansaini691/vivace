@@ -52,7 +52,7 @@ i   Measures the total amount of "bass" in the current audio snapshot.
         """
         # TODO If not accurate, use the buffer directly (rather than an FFT)
 
-        event_list.BASS = self._get_bass_proportional(fft)
+        event_list.BASS = self._get_bass_max(fft)
 
         assert 0 <= event_list.BASS <= 1, \
             "Normalized BASS value %f is out of range" % (event_list.BASS)
