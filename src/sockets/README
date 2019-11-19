@@ -1,0 +1,2 @@
+Simulates the LED strip through a websocket interface, allowing offline
+prototyping.
