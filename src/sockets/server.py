@@ -2,7 +2,6 @@ import threading
 import time
 import asyncio
 import websockets
-import http.server
 """
 The main server writing the RGB array to a websocket. A client can then render
 a simulated version of the LED strip in the browser over a LAN.
@@ -32,6 +31,7 @@ async def write_socket(websocket, path, cv, arr):
             cv.wait()
             byte_array = bytes(arr)
         await websocket.send(byte_array)
+        await asyncio.sleep(0.01)
 
 
 def vivace_socket_thd(cv, pixel_map):
@@ -41,10 +41,11 @@ def vivace_socket_thd(cv, pixel_map):
     # Start asynchronous event loop
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(
-        websockets.serve(lambda websocket, path, arg=(cv, pixel_map):
-                         write_socket(websocket, path, cv, pixel_map),
-                         '0.0.0.0', 4444))
+    server = websockets.serve(lambda websocket, path, arg=(cv,
+                              pixel_map): write_socket(websocket, path,
+                              cv, pixel_map), '0.0.0.0', 4444)
+
+    loop.run_until_complete(server)
     loop.run_forever()
 
 
