@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+
+<html>
+   <head>
+      
+      <script type = "text/javascript">
+         function WebSocketTest() {
+            
+            if ("WebSocket" in window) {
+               //alert("WebSocket is supported by your Browser!");
+	       console.log("WebSocket established");
+               
+               // Let us open a web socket
+               var ws = new WebSocket("ws://localhost:4444");
+				
+               ws.onmessage = function (evt) { 
+                  var arr = evt.data;
+
+		  // TODO Get this value from configuration
+		  var BYTES_PER_INT = 1;
+
+		  // Convert bytes to int array
+		  const fr = new FileReader();
+		  fr.readAsArrayBuffer(arr);
+		  fr.onload = () => {
+			const data = new Uint8Array(fr.result);
+
+			var pixels = [];
+			for(var i = 0; i < data.length / BYTES_PER_INT; i += 1) {
+				pixels.push(0);
+				for(var j = 0; j < BYTES_PER_INT; j++) {
+					pixels[i] <<= 8;
+					pixels[i] |= data[i * BYTES_PER_INT + j];
+				}
+				
+			}
+			console.log(pixels);
+		  }
+		
+		  //const pixels = new Int16Array(fr.result);
+		
+		  //console.log(arr);
+               };
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  alert("Connection is closed..."); 
+               };
+            } else {
+              
+               // The browser doesn't support WebSocket
+               alert("WebSocket NOT supported by your Browser!");
+            }
+         }
+      </script>
+		
+   </head>
+   
+   <body>
+      <div id = "sse">
+         <a href = "javascript:WebSocketTest()">Run WebSocket</a>
+      </div>
+      
+   </body>
+</html>
