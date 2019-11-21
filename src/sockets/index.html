@@ -11,7 +11,8 @@
 	       console.log("WebSocket established");
                
                // Let us open a web socket
-               var ws = new WebSocket("ws://localhost:4444");
+	       var ws_addr = "ws://" + location.hostname + ":4444";
+               var ws = new WebSocket(ws_addr);
 				
                ws.onmessage = function (evt) { 
                   var arr = evt.data;
