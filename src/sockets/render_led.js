@@ -9,7 +9,7 @@ function render() {
 	ctx.stroke();
 }
 
-function WebSocketTest() {
+function startSockets() {
 	// Opens a websocket
 	var ws_addr = "ws://" + location.hostname + ":4444";
 	var ws = new WebSocket(ws_addr);
