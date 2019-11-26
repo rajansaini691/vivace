@@ -2,7 +2,7 @@ class SocketConf:
     """
     Stores configuration info for sockets
     """
-    PORT = 4444
+    PORT = 8000 
 
     # If overflow happens during byte conversion, increase this
     BYTES_PER_INT = 3

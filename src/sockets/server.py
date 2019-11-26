@@ -2,9 +2,12 @@ import threading
 import time
 import asyncio
 import websockets
+import http.server
+import socketserver
+from server_conf import SocketConf
 """
-The main server writing the RGB array to a websocket. A client can then render
-a simulated version of the LED strip in the browser over a LAN.
+Simulates the LED strip using an HTTP server with websockets. Used for
+development and offsite testing.
 """
 
 
@@ -36,7 +39,7 @@ async def write_socket(websocket, path, cv, arr):
 
 def vivace_socket_thd(cv, pixel_map):
     """
-    Main thread that feeds the pixel map to a web socket
+    Feeds the pixel map to a web socket
     """
     # Start asynchronous event loop
     loop = asyncio.new_event_loop()
@@ -49,6 +52,18 @@ def vivace_socket_thd(cv, pixel_map):
     loop.run_forever()
 
 
+def vivace_server_thd():
+    """
+    Starts and runs the HTTP server
+    """
+    # Start HTTP Server
+    Handler = http.server.SimpleHTTPRequestHandler
+
+    with socketserver.TCPServer(("", SocketConf.PORT), Handler) as httpd:
+        print("serving at port", SocketConf.PORT)
+        httpd.serve_forever()
+
+
 # TODO Delete when done testing
 if __name__ == '__main__':
     # Stores when the rgb array is ready for consumption
@@ -56,8 +71,10 @@ if __name__ == '__main__':
     test_pixel_map = [500, 501, 502]
     test_main_thd = threading.Thread(name='test_main', target=vivace_test_main,
                                      args=(array_ready, test_pixel_map))
-    socket_thd = threading.Thread(name='server_thd', target=vivace_socket_thd,
+    socket_thd = threading.Thread(name='socket_thd', target=vivace_socket_thd,
                                   args=(array_ready, test_pixel_map))
+    server_thd = threading.Thread(name='server_thd', target=vivace_server_thd)
 
     test_main_thd.start()
     socket_thd.start()
+    server_thd.start()
