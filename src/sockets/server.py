@@ -68,7 +68,7 @@ def vivace_server_thd():
 if __name__ == '__main__':
     # Stores when the rgb array is ready for consumption
     array_ready = threading.Condition()
-    test_pixel_map = [500, 501, 502]
+    test_pixel_map = [0, 0, 0]
     test_main_thd = threading.Thread(name='test_main', target=vivace_test_main,
                                      args=(array_ready, test_pixel_map))
     socket_thd = threading.Thread(name='socket_thd', target=vivace_socket_thd,
