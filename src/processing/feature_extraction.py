@@ -11,7 +11,7 @@ from numpy.fft import fft
 from numpy import absolute
 from numpy import column_stack
 import numpy as np
-from audio_conf import AudioConf
+from processing.audio_conf import AudioConf
 
 
 def get_fourier(audio_buffer, audio_conf):

@@ -15,8 +15,7 @@ Starts a jack client
 import jack
 from enum import Enum
 from threading import Lock
-from audio_conf import AudioConf
-from time import process_time
+from processing.audio_conf import AudioConf
 
 
 class VJack:
