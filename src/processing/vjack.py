@@ -68,7 +68,7 @@ class VJack:
             self.buffer_lock.acquire()
             for i in client.inports:
                 self.audio_buffer
-                self.audio_buffer = i.get_array()
+                self.audio_buffer = i.get_array().copy()
             self.buffer_lock.release()
 
         client.blocksize = audio_conf.BUFFER_SIZE
