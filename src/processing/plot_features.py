@@ -75,15 +75,18 @@ class FeaturePlot:
         return self.line
 
 
-# New version
 def _update_plot(jack: VJack, audio_conf, features, i):
+    """
+    Updates each feature's data
+    """
     # Get audio buffer
     audio_buf = jack.get_audio_buffer()
     return [feature.update(audio_buf, audio_conf) for feature in features]
 
+
 def get_fourier_plot(audio_buffer, audio_conf):
     """
-    Calculates the fourier transform optimized for plotting and slicing.
+    Calculates the fourier transform, optimized for plotting and slicing.
 
     Returns the coefficients as a pair of numpy arrays, separating the bin
     frequencies from the amplitudes
@@ -96,6 +99,7 @@ def get_fourier_plot(audio_buffer, audio_conf):
     y = y[0:n]
 
     return y
+
 
 if __name__ == '__main__':
     print("Debugging feature extractor")
