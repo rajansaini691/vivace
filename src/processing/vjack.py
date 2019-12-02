@@ -15,13 +15,15 @@ Starts a jack client
 import jack
 from enum import Enum
 from threading import Lock
+from audio_conf import AudioConf
+from time import process_time
 
 
 class VJack:
     """
     Configuration - TODO Put in global configuration file
     """
-    AUDIO_BUFFER_SIZE = 4096
+    AUDIO_BUFFER_SIZE = AudioConf.BUFFER_SIZE
 
     """
     Exposed data
