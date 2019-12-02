@@ -1,4 +1,4 @@
-from processing.shared_computations import get_fourier
+from processing.feature_extraction import get_fourier
 from processing.audio_conf import AudioConf
 from processing.bass import VBass
 
