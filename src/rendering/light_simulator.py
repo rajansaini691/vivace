@@ -65,7 +65,7 @@ class _LED:
         self.color = self.prog.get('color', None)
 
     def draw(self, rgb):
-        self.color.value = (1.0, 1.0, 1.0)
+        self.color.value = tuple(color/255 for color in rgb)
         self.vao_1.render()
         self.vao_2.render()
 
