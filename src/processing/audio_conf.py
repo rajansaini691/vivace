@@ -7,7 +7,7 @@ class AudioConf:
     NAME = "vivace"
 
     # Size of the audio buffer (in bytes)
-    BUFFER_SIZE = 4096
+    BUFFER_SIZE = 1024
 
     # Global samplerate (set to None to let the system decide)
     SAMPLERATE = None
