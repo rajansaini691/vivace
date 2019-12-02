@@ -1,1 +1,0 @@
-nnoremap rr :!python3 server.py<cr>
