@@ -38,6 +38,7 @@ class VJack:
     JACK_STATES = Enum('JACK_STATES', 'ERR UNINIT READY')
     jack_state = JACK_STATES.UNINIT
     buffer_lock = Lock()
+    client = None
 
     def __init__(self, audio_conf):
         """
@@ -71,9 +72,14 @@ class VJack:
                 self.audio_buffer = i.get_array().copy()
             self.buffer_lock.release()
 
+        @client.set_shutdown_callback
+        def shutdown():
+            print("Jack Client CLOSED")
+
         client.blocksize = audio_conf.BUFFER_SIZE
 
         # Starts jack client
+        self.client = client
         client.activate()
 
         # Connect our client to pulseaudio
