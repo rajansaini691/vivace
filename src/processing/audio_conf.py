@@ -14,6 +14,6 @@ BUFFER_SIZE = 1024
 SAMPLERATE = None
 
 # Audio source to connect to
-# Set to "system" to get input from mic; set to "pulse" to analyze internal
+# Set to "system" to get input from mic; set to "Pulse" to analyze internal
 # audio
-SOURCE_NAME = "pulse"
+SOURCE_NAME = "Pulse"
