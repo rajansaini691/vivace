@@ -84,7 +84,8 @@ class VJack:
         client.activate()
 
         # Connect our client to pulseaudio
-        pulse = client.get_ports(name_pattern="Pulse", is_output=True)
+        pulse = client.get_ports(name_pattern=audio_conf.SOURCE_NAME,
+                                 is_output=True)
 
         if not pulse:
             self.jack_state = self.JACK_STATES.ERR
