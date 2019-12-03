@@ -40,14 +40,13 @@ def get_fourier(audio_buffer):
     return fourier
 
 
-def get_lowpass_amplitude(fft, cutoff):
+def get_band(fft, low, high):
     """
-    Takes fourier coefficients as its argument and sums the frequencies below
-    the cutoff
+    Gets the total amplitude of frequencies in the given range
     """
     energy = 0
     for f, y in fft:
-        if f < cutoff:
+        if low < f < high:
             energy += y
     return energy
 
@@ -55,5 +54,11 @@ def get_lowpass_amplitude(fft, cutoff):
 def get_bass(audio_buf):
     # Update each feature's data
     main_fft = get_fourier(audio_buf)
-    bass = get_lowpass_amplitude(main_fft, 80)
+    bass = get_band(main_fft, 0, 80)
     return bass
+
+
+def get_mids(audio_buf):
+    main_fft = get_fourier(audio_buf)
+    mids = get_band(main_fft, 200, 800)
+    return mids
