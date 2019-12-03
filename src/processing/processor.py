@@ -1,5 +1,4 @@
 from processing.feature_extraction import get_fourier
-from processing.audio_conf import AudioConf
 from processing.bass import VBass
 
 """
@@ -13,14 +12,10 @@ class VProcessor:
     # (should be their own classes to hold data between frames)
     bass = VBass()
 
-    def update_event_list(self, audio_buffer, audio_conf: AudioConf,
-                          event_list):
+    def update_event_list(self, audio_buffer, event_list):
         """
         Parameters:
             audio_buffer    Raw audio buffer being passed to speakers
-
-            audio_conf      Stores the configuration of the audio buffer
-                            (like the SAMPLERATE, buffer size, etc)
 
             event_list      A list of events that occurred during the current
                             cycle (being written to)
@@ -29,7 +24,7 @@ class VProcessor:
         if len(audio_buffer) <= 0:
             return
 
-        fft = get_fourier(audio_buffer, audio_conf)
+        fft = get_fourier(audio_buffer)
 
         # Gets the total amount of bass in the signal
         self.bass.get_bass(fft, event_list)

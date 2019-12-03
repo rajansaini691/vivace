@@ -15,14 +15,14 @@ Starts a jack client
 import jack
 from enum import Enum
 from threading import Lock
-from processing.audio_conf import AudioConf
+import processing.audio_conf as audio_conf
 
 
 class VJack:
     """
     Configuration - TODO Put in global configuration file
     """
-    AUDIO_BUFFER_SIZE = AudioConf.BUFFER_SIZE
+    AUDIO_BUFFER_SIZE = audio_conf.BUFFER_SIZE
 
     """
     Exposed data
@@ -41,7 +41,7 @@ class VJack:
     buffer_lock = Lock()
     client = None
 
-    def __init__(self, audio_conf):
+    def __init__(self):
         """
         Starts a jack client that grabs live data from PulseAudio
         """
@@ -59,7 +59,7 @@ class VJack:
 
         @client.set_blocksize_callback
         def blocksize(blocksize):
-            audio_conf.buffer_size = blocksize
+            audio_conf.BUFFER_SIZE = blocksize
 
         @client.set_samplerate_callback
         def samplerate(samplerate):

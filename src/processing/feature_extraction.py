@@ -11,10 +11,10 @@ from numpy.fft import fft
 from numpy import absolute
 from numpy import column_stack
 import numpy as np
-from processing.audio_conf import AudioConf
+import processing.audio_conf as audio_conf
 
 
-def get_fourier(audio_buffer, audio_conf):
+def get_fourier(audio_buffer):
     """
     Calculates the fourier transform of a given audio buffer and returns a
     mapping between frequency and amplitude
@@ -40,7 +40,7 @@ def get_fourier(audio_buffer, audio_conf):
     return fourier
 
 
-def get_lowpass_amplitude(fft, audio_conf: AudioConf, cutoff):
+def get_lowpass_amplitude(fft, cutoff):
     """
     Takes fourier coefficients as its argument and sums the frequencies below
     the cutoff
@@ -52,8 +52,8 @@ def get_lowpass_amplitude(fft, audio_conf: AudioConf, cutoff):
     return energy
 
 
-def get_bass(audio_buf, audio_conf):
+def get_bass(audio_buf):
     # Update each feature's data
-    main_fft = get_fourier(audio_buf, audio_conf)
-    bass = get_lowpass_amplitude(main_fft, audio_conf, 80)
+    main_fft = get_fourier(audio_buf)
+    bass = get_lowpass_amplitude(main_fft, 80)
     return bass

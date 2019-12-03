@@ -1,71 +1,73 @@
+#!/usr/bin/env python3
+
 from processing.vjack import VJack
 from processing.processor import VProcessor
-from processing.audio_conf import AudioConf
+from processing.plot_features import graph_features
 from rendering.renderer import VRenderer
-from rendering.rendering_conf import RenderingConf
+import rendering.rendering_conf as rendering_conf
 from rendering.light_simulator import VSimulator
 from events import VEvents
 from time import process_time, sleep
+import sys
 
-"""""""""""""""""""""""""""""""""""""""""""""""
 
-Configurations
+def main_vivace_thd():
+    """""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""""""""""""""""""""""""""""""""""""
-audio_conf = AudioConf()
-rendering_conf = RenderingConf()
+    Initializations
 
-"""""""""""""""""""""""""""""""""""""""""""""""
+    """""""""""""""""""""""""""""""""""""""""""""""
 
-Initializations
+    # Wrapper for jack client to get live audio data
+    jack = VJack()
 
-"""""""""""""""""""""""""""""""""""""""""""""""
+    # Stores the events
+    event_list = VEvents()
 
-# Wrapper for jack client to get live audio data
-jack = VJack(audio_conf)
+    # Updates the event list
+    processor = VProcessor()
 
-# Stores the events
-event_list = VEvents()
+    # Updates the pixel map
+    renderer = VRenderer()
 
-# Updates the event list
-processor = VProcessor()
+    # Draws the pixel map
+    simulator = VSimulator()
 
-# Updates the pixel map
-renderer = VRenderer()
+    # The RGB pixel map getting rendered.
+    # Ex: [(0x00, 0x00, 0x00), (0xFF, 0xFF, 0xFF)] is rendered as black, white
+    pixel_map = [(0x00, 0x00, 0x00)] * rendering_conf.NUM_PIXELS
 
-# Draws the pixel map
-simulator = VSimulator(rendering_conf)
-
-# The RGB pixel map getting rendered.
-# Ex: [(0x00, 0x00, 0x00), (0xFF, 0xFF, 0xFF)] is rendered as black, white
-pixel_map = [(0x00, 0x00, 0x00)] * rendering_conf.NUM_PIXELS
-
-# Keeps track of the current time to keep writes consistent
-prev_time = None
-curr_time = process_time()
-
-"""""""""""""""""""""""""""""""""""""""""""""""
-
-The grand loop
-
-"""""""""""""""""""""""""""""""""""""""""""""""
-while True:
-    # Reset stopwatch
-    prev_time = curr_time
+    # Keeps track of the current time to keep writes consistent
     curr_time = process_time()
 
-    # Reads
-    audio_buf = jack.get_audio_buffer()
+    """""""""""""""""""""""""""""""""""""""""""""""
 
-    # Processing
-    processor.update_event_list(audio_buf, audio_conf, event_list)
+    The grand loop
 
-    # Rendering
-    renderer.update_pixel_map(event_list, rendering_conf, pixel_map)
+    """""""""""""""""""""""""""""""""""""""""""""""
+    while True:
+        # Reset stopwatch
+        curr_time = process_time()
 
-    # Writes (Test output to LEDs)
-    simulator.write(pixel_map)
+        # Reads
+        audio_buf = jack.get_audio_buffer()
 
-    # Sleep for remainder of loop time
-    delta_t = process_time() - curr_time
-    sleep(rendering_conf.WRITE_PERIOD - delta_t)
+        # Processing
+        processor.update_event_list(audio_buf, event_list)
+
+        # Rendering (Test output to LEDs)
+        renderer.update_pixel_map(event_list, pixel_map)
+        simulator.write(pixel_map)
+
+        # Sleep for remainder of loop time
+        delta_t = process_time() - curr_time
+        sleep(rendering_conf.WRITE_PERIOD - delta_t)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        main_vivace_thd()
+    elif sys.argv[1] == "dev":
+        graph_features()
+    else:
+        print("Usage: " + sys.argv[0] + " [dev]", file=sys.stderr)

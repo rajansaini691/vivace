@@ -4,15 +4,15 @@ Run this script to debug the feature calculations
 import numpy as np
 from numpy.fft import fft
 from numpy import absolute
-from vjack import VJack
+from processing.vjack import VJack
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from functools import partial
-from feature_extraction import get_bass
-from audio_conf import AudioConf
+from processing.feature_extraction import get_bass
+import processing.audio_conf as audio_conf
 
 
-class FeaturePlot:
+class _FeaturePlot:
     """
     Abstracts common behavior between features when plotting them for code
     efficiency
@@ -23,8 +23,7 @@ class FeaturePlot:
         Parameters:
 
         update_func         The function that generates this feature's data. It
-                            must accept an audio_buffer and audio_conf as its
-                            arguments.
+                            must accept an audio buffer as its only argument.
 
         axis                Matplotlib axis to be drawn on
 
@@ -63,8 +62,8 @@ class FeaturePlot:
         else:
             self.line, = axis.plot(initial_data[0], initial_data[1])
 
-    def update(self, audio_buffer, audio_conf):
-        new_data = self.update_func(audio_buffer, audio_conf)
+    def update(self, audio_buffer):
+        new_data = self.update_func(audio_buffer)
 
         if self.buffered:
             self.data = self.data[1:] + [new_data]
@@ -75,16 +74,16 @@ class FeaturePlot:
         return self.line
 
 
-def _update_plot(jack: VJack, audio_conf, features, i):
+def _update_plot(jack: VJack, features, i):
     """
     Updates each feature's data
     """
     # Get audio buffer
     audio_buf = jack.get_audio_buffer()
-    return [feature.update(audio_buf, audio_conf) for feature in features]
+    return [feature.update(audio_buf) for feature in features]
 
 
-def get_fourier_plot(audio_buffer, audio_conf):
+def _get_fourier_plot(audio_buffer):
     """
     Calculates the fourier transform, optimized for plotting and slicing.
 
@@ -101,12 +100,14 @@ def get_fourier_plot(audio_buffer, audio_conf):
     return y
 
 
-if __name__ == '__main__':
+def graph_features():
+    """
+    Entrypoint for feature graphing
+    """
     print("Debugging feature extractor")
 
     # Init jack client with default configurations
-    audio_conf = AudioConf()
-    jack = VJack(audio_conf)
+    jack = VJack()
 
     # Set up matplotlib
     fig = plt.figure()
@@ -120,19 +121,25 @@ if __name__ == '__main__':
     fig.canvas.draw()
 
     # Initialize plots with data
-    f = np.linspace(0, audio_conf.SAMPLERATE / 2, AudioConf.BUFFER_SIZE//2)
-    y = np.zeros(AudioConf.BUFFER_SIZE//2)
+    f = np.linspace(0, audio_conf.SAMPLERATE / 2, audio_conf.BUFFER_SIZE//2)
+    y = np.zeros(audio_conf.BUFFER_SIZE//2)
 
-    fft_feature = FeaturePlot(get_fourier_plot, fft_ax, 2, initial_data=(f, y),
-                              xlim=[0, 5000], ylim=[0, 0.5])
+    fft_feature = _FeaturePlot(
+        _get_fourier_plot,
+        fft_ax,
+        2,
+        initial_data=(f, y),
+        xlim=[0, 5000],
+        ylim=[0, 0.5]
+    )
 
-    bass_feature = FeaturePlot(get_bass, bass_ax, 1,
-                               buffered=True, ylim=[0, 2])
+    bass_feature = _FeaturePlot(get_bass, bass_ax, 1,
+                                buffered=True, ylim=[0, 2])
 
     features = [fft_feature, bass_feature]
 
-    animation_func = partial(_update_plot, jack, audio_conf, features)
-    ani = animation.FuncAnimation(
+    animation_func = partial(_update_plot, jack, features)
+    animation.FuncAnimation(
         fig,
         animation_func,
         interval=0,

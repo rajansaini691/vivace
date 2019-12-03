@@ -1,8 +1,8 @@
 import glwindow
 import moderngl
 import struct
+import rendering.rendering_conf as rendering_conf
 
-from rendering.rendering_conf import RenderingConf
 """
 Simulates the LED strip for testing
 """
@@ -74,7 +74,7 @@ class VSimulator:
     """
     Uses pygame to simulate writes to the LED strip
     """
-    def __init__(self, rendering_conf: RenderingConf):
+    def __init__(self):
         # Window parameters
         self.WIDTH = 800
         self.HEIGHT = 600
