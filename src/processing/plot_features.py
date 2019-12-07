@@ -130,7 +130,7 @@ def graph_features():
         2,
         initial_data=(f, y),
         xlim=[0, 5000],
-        ylim=[0, 0.05]
+        ylim=[0, 0.25]
     )
 
     bass_feature = _FeaturePlot(get_bass, bass_ax, 1,
