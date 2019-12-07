@@ -26,5 +26,5 @@ class VProcessor:
 
         fft = get_fourier(audio_buffer)
 
-        # Gets the total amount of bass in the signal
-        self.bass.get_bass(fft, event_list)
+        # Gets the amount of bass in the signal
+        event_list.BASS = self.bass.process(fft)
