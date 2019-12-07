@@ -1,6 +1,6 @@
 """
-A library of computations that look for different features within an audio
-signal.
+The functions in this library look for different features within an
+audio signal.
 
 Ex:
  - Finding the signal's fourier transform
