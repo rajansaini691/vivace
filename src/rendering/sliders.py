@@ -20,6 +20,9 @@ class Slider:
                 self.buffer[buf_index]
             )
 
-        if strength < 0.7:
+        if strength < 0.4:
             color = (0, 0, 0)
+            print(strength)
+        else:
+            print("Hit")
         self.buffer = self.buffer[1:] + [color]

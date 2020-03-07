@@ -1,4 +1,5 @@
 
+
 # TODO Put in own file
 def combine_colors(proportion, old, new):
     """
@@ -7,7 +8,10 @@ def combine_colors(proportion, old, new):
     """
     combined = []
     for i in range(3):
-        combined.append(min(255, (1-proportion) * old[i] + proportion*new[i]))
+        combined.append(min(
+            255,
+            int((1-proportion) * old[i] + proportion*new[i])
+        ))
     return combined
 
 
