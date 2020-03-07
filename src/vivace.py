@@ -5,7 +5,7 @@ from processing.processor import VProcessor
 from processing.plot_features import graph_features
 from rendering.renderer import VRenderer
 import rendering.rendering_conf as rendering_conf
-from rendering.light_simulator import VSimulator
+from sockets.rpi import VSocket
 from events import VEvents
 from time import process_time, sleep
 import sys
@@ -31,7 +31,7 @@ def main_vivace_thd():
     renderer = VRenderer()
 
     # Draws the pixel map
-    simulator = VSimulator()
+    socket = VSocket()
 
     # The RGB pixel map getting rendered.
     # Ex: [(0x00, 0x00, 0x00), (0xFF, 0xFF, 0xFF)] is rendered as black, white
@@ -57,11 +57,12 @@ def main_vivace_thd():
 
         # Rendering (Test output to LEDs)
         renderer.update_pixel_map(event_list, pixel_map)
-        simulator.write(pixel_map)
+        socket.write(pixel_map)
 
         # Sleep for remainder of loop time
         delta_t = process_time() - curr_time
         sleep(rendering_conf.WRITE_PERIOD - delta_t)
+
 
 
 if __name__ == "__main__":
