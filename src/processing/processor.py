@@ -1,5 +1,6 @@
 from processing.feature_extraction import get_fourier
-from processing.bass import VBass
+from processing.bass import BassFeature
+from processing.mids import MidsFeature
 
 """
 Takes data coming from an audio buffer and generates a list of events
@@ -8,9 +9,8 @@ Takes data coming from an audio buffer and generates a list of events
 
 class VProcessor:
 
-    # TODO Store individual processors here
-    # (should be their own classes to hold data between frames)
-    bass = VBass()
+    bass = BassFeature()
+    mids = MidsFeature()
 
     def update_event_list(self, audio_buffer, event_list):
         """
@@ -26,5 +26,6 @@ class VProcessor:
 
         fft = get_fourier(audio_buffer)
 
-        # Gets the amount of bass in the signal
+        # Update features
         event_list.BASS = self.bass.process(fft)
+        event_list.MIDS = self.mids.process(fft)

@@ -8,7 +8,7 @@ from processing.vjack import VJack
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from functools import partial
-from processing.feature_extraction import get_bass
+from processing.feature_extraction import get_mids
 import processing.audio_conf as audio_conf
 
 
@@ -133,7 +133,7 @@ def graph_features():
         ylim=[0, 0.25]
     )
 
-    bass_feature = _FeaturePlot(get_bass, bass_ax, 1,
+    bass_feature = _FeaturePlot(get_mids, bass_ax, 1,
                                 buffered=True, ylim=[0, 2])
 
     features = [fft_feature, bass_feature]
