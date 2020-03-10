@@ -4,15 +4,15 @@ from processing.vjack import VJack
 from processing.processor import VProcessor
 from processing.plot_features import graph_features
 from rendering.renderer import VRenderer
+from rendering.light_simulator import VSimulator
 import rendering.rendering_conf as rendering_conf
 from sockets.rpi import VSocket
 from events import VEvents
 from time import process_time, sleep
-import sys
 import argparse
 
 
-def main_vivace_thd():
+def main_vivace_thd(output_target_str="simulator"):
     """""""""""""""""""""""""""""""""""""""""""""""
 
     Initializations
@@ -31,8 +31,14 @@ def main_vivace_thd():
     # Updates the pixel map
     renderer = VRenderer()
 
-    # Draws the pixel map
-    socket = VSocket()
+    # Draws or transmits the pixel map, depending on the desired target
+    output_target = None
+    if output_target_str == "simulator":
+        output_target = VSimulator()
+    elif output_target_str == "socket":
+        output_target = VSocket()
+
+    assert(output_target is not None)
 
     # The RGB pixel map getting rendered.
     # Ex: [(0x00, 0x00, 0x00), (0xFF, 0xFF, 0xFF)] is rendered as black, white
@@ -58,7 +64,7 @@ def main_vivace_thd():
 
         # Rendering (Test output to LEDs)
         renderer.update_pixel_map(event_list, pixel_map)
-        socket.write(pixel_map)
+        output_target.write(pixel_map)
 
         # Sleep for remainder of loop time
         delta_t = process_time() - curr_time
@@ -72,15 +78,13 @@ if __name__ == "__main__":
                         choices=['simulator', 'features', 'socket', 'chip']
     )
     args = parser.parse_args()
-    output = parser.output
+    output = args.output
     if output == 'simulator':
-        # TODO Pass args to main thd
-        main_vivace_thd()
+        main_vivace_thd(output_target_str='simulator')
     elif output == 'features':
         graph_features()
     elif output == 'socket':
-        # TODO Pass args to main thd
-        main_vivace_thd()
+        main_vivace_thd(output_target_str='socket')
     elif output == 'chip':
         # TODO Implement on-chip writing
         exit()
