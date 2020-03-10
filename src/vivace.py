@@ -9,6 +9,7 @@ from sockets.rpi import VSocket
 from events import VEvents
 from time import process_time, sleep
 import sys
+import argparse
 
 
 def main_vivace_thd():
@@ -64,11 +65,22 @@ def main_vivace_thd():
         sleep(rendering_conf.WRITE_PERIOD - delta_t)
 
 
-
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
+    parser = argparse.ArgumentParser(prog="vivace")
+    parser.add_argument(
+                        '-o', '--output', nargs='?', default='simulator',
+                        choices=['simulator', 'features', 'socket', 'chip']
+    )
+    args = parser.parse_args()
+    output = parser.output
+    if output == 'simulator':
+        # TODO Pass args to main thd
         main_vivace_thd()
-    elif sys.argv[1] == "dev":
+    elif output == 'features':
         graph_features()
-    else:
-        print("Usage: " + sys.argv[0] + " [dev]", file=sys.stderr)
+    elif output == 'socket':
+        # TODO Pass args to main thd
+        main_vivace_thd()
+    elif output == 'chip':
+        # TODO Implement on-chip writing
+        exit()
