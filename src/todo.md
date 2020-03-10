@@ -4,3 +4,4 @@
     * Information on real-time usage of essentia
   * We want streaming data
   * Low-hanging fruit: pitch estimator for monophonic music, RhythmExtractor
+* Argument parsing (in progress)
