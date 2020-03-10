@@ -111,7 +111,7 @@ class VSimulator:
                 return (((i - 1/3.0) * 6 - 1)*0.9, 0.95)
             else:
                 # Right wall
-                return (0.9, ((i - 2/3.0) * 6 - 1)*0.95)
+                return (0.9, ((2/3.0 - i) * 6 + 1)*0.95)
 
         # Init LED objects
         n = rendering_conf.NUM_PIXELS       # More concise
