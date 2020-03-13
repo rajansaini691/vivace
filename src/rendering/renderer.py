@@ -12,12 +12,12 @@ class VRenderer:
     # TODO Store individual rendering objects here
     slider = Slider()
 
-    BACKGROUND_COLOR = (0, 255, 255)  # Cyan
+    BACKGROUND_COLOR = (0, 127, 127)  # Cyan
 
     # TODO Come up with a better name than overlay
-    OVERLAY_COLOR = (252, 135, 2)     # Orange
+    OVERLAY_COLOR = (126, 66, 1)     # Orange
 
-    SLIDER_COLOR = (188, 1, 255)      # Purple
+    SLIDER_COLOR = (116, 247, 129)      # Green
 
     def update_pixel_map(self, event_list: VEvents, pixel_map):
         """
