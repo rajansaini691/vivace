@@ -8,7 +8,7 @@ import pickle
 
 class VSocket:
     def __init__(self):
-        self.UDP_IP = "169.231.11.216"
+        self.UDP_IP = "169.231.11.31"
         self.UDP_PORT = 5005
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
