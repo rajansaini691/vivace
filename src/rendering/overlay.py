@@ -27,7 +27,7 @@ def draw_overlay(pixel_map, color, strength):
     overlay_radius = 8
 
     # Halfway mark
-    halfway_mark = 163 * len(pixel_map) / 420
+    halfway_mark = 23 * len(pixel_map) / 60
 
     # Number of pixels away from the center
     dist = halfway_mark * strength
