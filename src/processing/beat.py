@@ -1,12 +1,12 @@
 from essentia.standard import SingleBeatLoudness
-import numpy as np
 
 
 class BeatDetector:
     """
     Computes presence of a beat
     """
-    def __init__(self, buffer_size, fs, window_frames, beat_frames):
+    def __init__(self, buffer_size=1024, fs=44100, window_frames=5,
+                 beat_frames=2):
         """
         Parameters:
             buffer_size     Number of samples in each frame (power of 2, like
