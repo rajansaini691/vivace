@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from functools import partial
 from processing.feature_extraction import get_mids
+from processing.beat import BeatDetector
 import processing.audio_conf as audio_conf
 
 
@@ -62,7 +63,7 @@ class _FeaturePlot:
         else:
             self.line, = axis.plot(initial_data[0], initial_data[1])
 
-    def update(self, audio_buffer):
+    def process(self, audio_buffer):
         new_data = self.update_func(audio_buffer)
 
         if self.buffered:
@@ -80,7 +81,7 @@ def _update_plot(jack: VJack, features, i):
     """
     # Get audio buffer
     audio_buf = jack.get_audio_buffer()
-    return [feature.update(audio_buf) for feature in features]
+    return [feature.process(audio_buf) for feature in features]
 
 
 def _get_fourier_plot(audio_buffer):
@@ -114,7 +115,7 @@ def graph_features():
 
     # Init axes
     fft_ax = fig.add_subplot(121)
-    bass_ax = fig.add_subplot(122)
+    beat_ax = fig.add_subplot(122)
 
     # Init canvas
     fig.show()
@@ -133,10 +134,11 @@ def graph_features():
         ylim=[0, 0.25]
     )
 
-    bass_feature = _FeaturePlot(get_mids, bass_ax, 1,
-                                buffered=True, ylim=[0, 2])
+    detector = BeatDetector()
+    beat_feature = _FeaturePlot(detector.process, beat_ax, 1, buffered=True,
+                                ylim=[0, 5])
 
-    features = [fft_feature, bass_feature]
+    features = [fft_feature, beat_feature]
 
     animation_func = partial(_update_plot, jack, features)
     animation.FuncAnimation(
