@@ -34,8 +34,11 @@ class BeatDetector:
     def process(self, audio_buffer):
         """
         Test of Essentia library (should refactor once working)
+
+        Parameters:
+            audio_buffer        Numpy array containing audio
         """
-        self.buffer = self.buffer[self.BUFFER_SIZE:] + audio_buffer
+        self.buffer = self.buffer[self.BUFFER_SIZE:] + audio_buffer.tolist()
 
         # Run algorithm
         return self.beat_alg(self.buffer)[0]
