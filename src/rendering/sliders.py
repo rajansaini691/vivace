@@ -9,8 +9,8 @@ class Slider:
         self.buffer = int(rendering_conf.NUM_PIXELS / 2) * [(0, 0, 0)]
 
     def update(self, pixel_map, strength, color):
-        halfway = len(pixel_map) / 2
-        extreme = (len(pixel_map) - 1) / 2     # Better name
+        halfway = 23 * len(pixel_map) / 60
+        extreme = 23 * (len(pixel_map) - 1) / 60    # Better name
         for i, pixel in enumerate(pixel_map):
             buf_index = int(halfway * (1 - abs(i - extreme) / (extreme)))
 
@@ -22,7 +22,4 @@ class Slider:
 
         if strength < 0.4:
             color = (0, 0, 0)
-            print(strength)
-        else:
-            print("Hit")
         self.buffer = self.buffer[1:] + [color]
