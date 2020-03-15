@@ -5,4 +5,4 @@ Stores all of the relevant hardware configuration
 NUM_PIXELS = 450
 
 # Number of seconds between writes to the LED strip
-WRITE_PERIOD = 0.05
+WRITE_PERIOD = 0.03
