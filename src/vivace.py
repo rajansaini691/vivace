@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from processing.vjack import VJack
+from inputs.jack_wrapper import VJack
 from processing.processor import VProcessor
 from processing.plot_features import graph_features
 from rendering.renderer import VRenderer
-from rendering.light_simulator import VSimulator
+from outputs.light_simulator import VSimulator
 import rendering.rendering_conf as rendering_conf
-from sockets.rpi import VSocket
+from outputs.rpi import VSocket
 from events import VEvents
 from time import process_time, sleep
 import argparse
