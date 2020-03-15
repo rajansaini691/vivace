@@ -32,3 +32,8 @@ class VProcessor:
         event_list.BASS = self.bass.process(fft)
         event_list.MIDS = self.mids.process(fft)
         event_list.NEW_SONG = self.new_song_detector.update(fft)
+
+        # Reset the max value of each normalized feature
+        if event_list.NEW_SONG:
+            self.bass.reset()
+            self.mids.reset()

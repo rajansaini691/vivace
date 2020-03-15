@@ -38,3 +38,6 @@ class NormalizedFeature(ABC):
             self.highest_value = measurement
 
         return measurement / self.highest_value
+
+    def reset(self):
+        self.highest_value = 0.1
