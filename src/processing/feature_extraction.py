@@ -1,6 +1,6 @@
 """
 The functions in this library look for different features within an
-audio signal.
+audio signal. (Will be deprecated soon)
 
 Ex:
  - Finding the signal's fourier transform
