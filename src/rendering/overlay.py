@@ -24,7 +24,7 @@ def draw_overlay(pixel_map, color, strength):
     # TODO Refactor to simplify
 
     # Overlay radius
-    overlay_radius = 8
+    overlay_radius = 16
 
     # Halfway mark
     halfway_mark = 23 * len(pixel_map) / 60
