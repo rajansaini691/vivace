@@ -14,7 +14,8 @@ class VRenderer:
     # TODO Store individual rendering objects here
     slider = Slider()
 
-    BACKGROUND_COLOR = (0, 127, 127)  # Cyan
+    BACKGROUND_MIDDLE_COLOR = (0, 127, 127)  # Cyan
+    BACKGROUND_END_COLOR = (126, 66, 1)   # Orange
 
     # TODO Come up with a better name than overlay
     OVERLAY_COLOR = (126, 66, 1)     # Orange
@@ -38,7 +39,8 @@ class VRenderer:
             pixel_map[i] = (0xFF, 0xFF, 0xFF)
 
         # Draw background modulated by amount of bass
-        draw_background(pixel_map, self.BACKGROUND_COLOR, event_list.BASS)
+        draw_background(pixel_map, self.BACKGROUND_MIDDLE_COLOR,
+                        self.BACKGROUND_END_COLOR, event_list.BASS)
         draw_overlay(pixel_map, self.OVERLAY_COLOR, event_list.MIDS)
         self.slider.update(pixel_map, event_list.BASS, self.SLIDER_COLOR)
 
@@ -50,7 +52,8 @@ class VRenderer:
                 rgb = tuple([int(x * 255) for x in rgb])
                 colors.append(rgb)
 
-            self.BACKGROUND_COLOR = colors[0]
+            self.BACKGROUND_MIDDLE_COLOR = colors[0]
             self.OVERLAY_COLOR = colors[1]
             self.SLIDER_COLOR = colors[2]
+            self.BACKGROUND_MIDDLE_COLOR = self.SLIDER_COLOR
             print("NEW SONG")
