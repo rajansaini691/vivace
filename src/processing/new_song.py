@@ -27,6 +27,9 @@ class NewSongDetector:
         # Model with an FSM
         self.state = _States.NORMAL
 
+        # Number of silent frames in a row
+        self.SILENCE_THRESH = 20
+
     def update(self, fft):
         """
         Accepts an audio buffer
@@ -57,10 +60,28 @@ class NewSongDetector:
             self.average_amplitude += amplitude
             self.average_amplitude /= self.acc_frames
 
-            # Dipping below threshold
-            print(self.average_amplitude)
+            # Dipping below threshold transitions to DIP
             if amplitude < self.average_amplitude / 4:
-                print("below")
+                self.state = _States.DIP
+                self.acc_frames = 0
+
+        if self.state == _States.DIP:
+            self.acc_frames += 1
+
+            # Transition out of dip
+            if amplitude > self.average_amplitude:
+                self.state = _States.NORMAL
+                self.acc_frames = 0
+
+            # Transition to silence if enough frames go by
+            if self.acc_frames > self.SILENCE_THRESH:
+                self.state = _States.SILENCE
+                self.acc_frames = 0
+
+                # Trigger NEW SONG
                 return True
 
+        if self.state == _States.SILENCE:
+            # TODO Add logic here
+            self.state = _States.NORMAL
         return False
