@@ -8,6 +8,10 @@ class Slider:
         # Stores the previous values
         self.buffer = int(rendering_conf.NUM_PIXELS / 2) * [(0, 0, 0)]
 
+        # Frames between updates
+        self.FRAME_DELAY = 2
+        self.frames = 0
+
     def update(self, pixel_map, strength, color):
         halfway = 23 * len(pixel_map) / 60
         extreme = 23 * (len(pixel_map) - 1) / 60    # Better name
@@ -22,4 +26,11 @@ class Slider:
 
         if strength < 0.4:
             color = (0, 0, 0)
-        self.buffer = self.buffer[1:] + [color]
+
+        # Update speed
+        self.frames += 1
+        self.frames %= self.FRAME_DELAY
+
+        if self.frames == 0:
+            # Move sliders over
+            self.buffer = self.buffer[1:] + [color]
