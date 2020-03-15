@@ -4,12 +4,12 @@ Run this script to debug the feature calculations
 import numpy as np
 from numpy.fft import fft
 from numpy import absolute
-from processing.vjack import VJack
+from inputs.jack_wrapper import VJack
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from functools import partial
-from processing.feature_extraction import get_mids
-import processing.audio_conf as audio_conf
+from processing.beat import BeatDetector
+import inputs.audio_conf as audio_conf
 
 
 class _FeaturePlot:

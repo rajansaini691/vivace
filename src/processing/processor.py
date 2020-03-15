@@ -1,6 +1,5 @@
 from processing.feature_extraction import get_fourier
-from processing.bass import BassFeature
-from processing.mids import MidsFeature
+from processing.features import BassFeature, MidsFeature
 
 """
 Takes data coming from an audio buffer and generates a list of events
