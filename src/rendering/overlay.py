@@ -1,4 +1,4 @@
-
+import rendering.rendering_conf as rendering_conf
 
 # TODO Put in own file
 def combine_colors(proportion, old, new):
@@ -27,26 +27,29 @@ def draw_overlay(pixel_map, color, strength):
     overlay_radius = 16
 
     # Halfway mark
-    halfway_mark = 23 * len(pixel_map) / 60
+    halfway_mark = rendering_conf.CENTER
 
     # Number of pixels away from the center
-    dist = halfway_mark * strength
+    dist = rendering_conf.NUM_PIXELS * strength
+    dist /= 4       # Scale the distance down
 
-    dist /= 2
-
-    # Color centroids
+    # Indices of overlay centroids
     left = int(halfway_mark - dist)
     right = int(halfway_mark + dist)
 
     for i in range(overlay_radius * 2):
-        l_index = int(left + i - overlay_radius)
-        r_index = int(right + i - overlay_radius)
+        l_index = int(left - overlay_radius + i)
+        r_index = int(right - overlay_radius + i)
 
-        if 0 < l_index < len(pixel_map):
-            proportion = 1 - (abs(i - overlay_radius) / overlay_radius)
+        # Strength of overlay at current pixel
+        proportion = 1 - (abs(i - overlay_radius) / overlay_radius)
+
+        # Write left overlay
+        if 0 < l_index < rendering_conf.NUM_PIXELS:
             new_color = combine_colors(proportion, pixel_map[l_index], color)
             pixel_map[l_index] = new_color
-            pixel_map[r_index] = new_color
 
-    pixel_map[left] = color
-    pixel_map[right] = color
+        # Write right overlay
+        if 0 < r_index < rendering_conf.NUM_PIXELS:
+            new_color = combine_colors(proportion, pixel_map[r_index], color)
+            pixel_map[r_index] = new_color
