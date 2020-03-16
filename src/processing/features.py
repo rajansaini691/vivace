@@ -41,6 +41,9 @@ class NormalizedFeature(ABC):
 
         return measurement / self.highest_value
 
+    def reset(self):
+        self.highest_value = 0.1
+
 
 class BassFeature(NormalizedFeature):
     """
