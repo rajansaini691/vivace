@@ -8,7 +8,6 @@ from inputs.jack_wrapper import VJack
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from functools import partial
-from processing.beat import BeatDetector
 import inputs.audio_conf as audio_conf
 
 
