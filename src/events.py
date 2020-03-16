@@ -9,3 +9,4 @@ class VEvents:
     # Stores the amount of "bass" in the signal
     BASS = 0.1
     MIDS = 0.1
+    NEW_SONG = False
