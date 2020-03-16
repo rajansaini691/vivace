@@ -68,7 +68,9 @@ def main_vivace_thd(output_target_str="simulator"):
 
         # Sleep for remainder of loop time
         delta_t = process_time() - curr_time
-        sleep(rendering_conf.WRITE_PERIOD - delta_t)
+        sleep_time = rendering_conf.MAX_WRITE_PERIOD - delta_t
+        if sleep_time > 0:
+            sleep(sleep_time)
 
 
 if __name__ == "__main__":
