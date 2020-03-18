@@ -1,5 +1,5 @@
 from processing.feature_extraction import get_fourier
-from processing.features import BassFeature, MidsFeature
+from processing.features import BassFeature, MidsFeature, KickDetector
 from processing.new_song import NewSongDetector
 
 """
@@ -11,6 +11,7 @@ class VProcessor:
 
     bass = BassFeature()
     mids = MidsFeature()
+    kick = KickDetector()
     new_song_detector = NewSongDetector()
 
     def update_event_list(self, audio_buffer, event_list):
@@ -33,7 +34,7 @@ class VProcessor:
         event_list.NEW_SONG = self.new_song_detector.update(fft)
 
         # Update higher-level-features
-        event_list.KICK = event_list.BASS > 0.2
+        event_list.KICK = self.kick.process(event_list.BASS)
 
         # Reset the max value of each normalized feature
         if event_list.NEW_SONG:

@@ -77,3 +77,19 @@ class MidsFeature(NormalizedFeature):
 
     def process(self, fft):
         return super(MidsFeature, self).process(fft)
+
+
+# TODO Create a file of detectors
+class KickDetector():
+    """
+    Returns whether a kick hit occurs
+    """
+
+    def __init__(self):
+        # Holds previous bass levels
+        self.buffer = [0.1]
+
+    def process(self, bass_level):
+        last_sample = self.buffer[0]
+        self.buffer[0] = bass_level
+        return last_sample > 0 and bass_level / last_sample > 2
