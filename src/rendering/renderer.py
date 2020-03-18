@@ -42,7 +42,8 @@ class VRenderer:
         draw_background(pixel_map, self.BACKGROUND_MIDDLE_COLOR,
                         self.BACKGROUND_END_COLOR, event_list.BASS)
         draw_overlay(pixel_map, self.OVERLAY_COLOR, event_list.MIDS)
-        self.slider.update(pixel_map, event_list.BASS, self.SLIDER_COLOR)
+        self.slider.update(pixel_map, event_list.BASS,
+                           event_list.KICK, self.SLIDER_COLOR)
 
         if(event_list.NEW_SONG):
             hues = [(x/3 + random.uniform(0, 1), 0.75, 0.4) for x in range(3)]
